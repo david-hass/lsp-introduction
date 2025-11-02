@@ -1,0 +1,38 @@
+# Definiert die Datenquelle
+source "raw_user_data" {
+    provider: file
+    path: "/data/users.csv"
+}
+
+# Ein Task, der die Daten filtert
+task "filter_active_users" {
+    # Nimmt Output von "raw_user_data" als Input
+    input: "raw_user_data"
+    transformer: "filter_by_column 'status' == 'active'"
+}
+
+# Ein weiterer Task, der die Daten anonymisiert
+task "anonymize_pii" {
+    # Nimmt Output von "filter_active_users" als Input
+    input: "filter_active_users"
+    transformer: "hash_columns ['email', 'lastname']"
+}
+
+# Das Ziel, wo die finalen Daten gespeichert werden
+sink "active_user_report" {
+    # Nimmt den Output des Anonymisierungs-Tasks
+    input: "anonymize_pii"
+    target: file
+    path: "/reports/active_users.json"
+}
+
+# Ein zweiter, unabhängiger Flow in derselben Datei
+source "app_logs" {
+    provider: kafka
+    topic: "production_logs"
+}
+
+task "find_errors" {
+    input: "app_logs"
+    transformer: "grep 'ERROR'"
+}
