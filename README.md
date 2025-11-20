@@ -28,3 +28,7 @@ sink "active_user_report" {
     path: "/reports/active_users.json"
 }
 ```
+
+The grammar for an LR parser must be unambiguous, as is the case in the FlowLang example, or supplemented by rules for resolving priority conflicts.  
+https://en.wikipedia.org/wiki/LR_parser#Conflicts_in_the_constructed_tables
+

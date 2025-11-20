@@ -20,17 +20,32 @@ module.exports = grammar({
       field('name', $.string_literal),
       field('body', $.block_body),
     ),
+    source_body: $ => seq(
+      '{',
+      repeat($.key_value_pair),
+      '}'
+    ),
 
     task_definition: $ => seq(
       'task',
       field('name', $.string_literal),
       field('body', $.block_body),
     ),
+    task_body: $ => seq(
+      '{',
+      repeat($.key_value_pair),
+      '}'
+    ),
 
     sink_definition: $ => seq(
       'sink',
       field('name', $.string_literal),
       field('body', $.block_body),
+    ),
+    sink_body: $ => seq(
+      '{',
+      repeat($.key_value_pair),
+      '}'
     ),
 
     block_body: $ => seq(
