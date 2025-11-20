@@ -1,5 +1,5 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.md)
-[![de](https://img.shields.io/badge/lang-es-yellow.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.de.md)
+[![de](https://img.shields.io/badge/lang-de-yellow.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.de.md)
 
 
 ### FlowLang
