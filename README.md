@@ -29,6 +29,6 @@ sink "active_user_report" {
 }
 ```
 
-The grammar for an LR parser must be unambiguous, as is the case in the FlowLang example, or supplemented by rules for resolving priority conflicts.  
+The grammar for an LR parser must be unambiguous, as is the case in the FlowLang example, or must be augmented by tie-breaking precedence rules.  
 https://en.wikipedia.org/wiki/LR_parser#Conflicts_in_the_constructed_tables
 
