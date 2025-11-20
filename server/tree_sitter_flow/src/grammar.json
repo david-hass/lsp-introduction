@@ -42,12 +42,20 @@
           }
         },
         {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
           "type": "FIELD",
           "name": "body",
           "content": {
             "type": "SYMBOL",
             "name": "block_body"
           }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },
@@ -67,12 +75,20 @@
           }
         },
         {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
           "type": "FIELD",
           "name": "body",
           "content": {
             "type": "SYMBOL",
             "name": "block_body"
           }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
         }
       ]
     },

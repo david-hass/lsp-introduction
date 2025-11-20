@@ -2,18 +2,29 @@ package main
 
 import (
 	"bufio"
+	//	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/david-hass/lsp-introduction/tree_sitter_flow"
+	sitter "github.com/smacker/go-tree-sitter"
 	"io"
 	"log"
+	//	"net/url"
 	"os"
 	"strconv"
 	"strings"
+	"sync"
+)
+
+var (
+	documentStore = make(map[string]string)
+	storeMutex    = &sync.Mutex{}
+	tsParser      *sitter.Parser
+	flowLang      *sitter.Language
 )
 
 func main() {
 	// lsp communicates via stdin/stdout
-	// so a logger is used
 	f, err := os.OpenFile("/tmp/flow_lsp.log", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatalf("failed to open log file: %v", err)
@@ -21,6 +32,11 @@ func main() {
 	defer f.Close()
 	log.SetOutput(f)
 	log.Println("--- flowlang server started ---")
+
+	tsParser = sitter.NewParser()
+	flowLang = sitter.NewLanguage(tree_sitter_flow.Language())
+	tsParser.SetLanguage(flowLang)
+	log.Println("flow tree-sitter-parser loaded")
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -30,7 +46,7 @@ func main() {
 		contentLength, err := readContentLength(reader)
 		if err != nil {
 			if err == io.EOF {
-				log.Println("Client connection closed")
+				log.Println("client connection closed")
 				return
 			}
 			log.Printf("failed to read header: %v", err)
@@ -80,6 +96,7 @@ func handleMessage(body []byte) {
 	var request struct {
 		ID     *json.RawMessage `json:"id"`
 		Method string           `json:"method"`
+		Params *json.RawMessage `json:"params"`
 	}
 
 	if err := json.Unmarshal(body, &request); err != nil {
@@ -88,7 +105,7 @@ func handleMessage(body []byte) {
 	}
 
 	// 'id' == nil means Notification -> no answer needed
-	// 'id' != nil means Request -> answer expected	
+	// 'id' != nil means Request -> answer expected
 
 	switch request.Method {
 	case "initialize":
@@ -97,7 +114,8 @@ func handleMessage(body []byte) {
 		// tell client about hover capabilities
 		response := InitializeResult{
 			Capabilities: ServerCapabilities{
-				HoverProvider: true,
+				TextDocumentSync: FullSync,
+				HoverProvider:    true,
 			},
 		}
 		sendResponse(request.ID, response)
@@ -161,8 +179,15 @@ type InitializeResult struct {
 	Capabilities ServerCapabilities `json:"capabilities"`
 }
 
+type TextDocumentSync int
+
+const (
+	FullSync TextDocumentSync = 1
+)
+
 type ServerCapabilities struct {
-	HoverProvider bool `json:"hoverProvider"`
+	TextDocumentSync TextDocumentSync
+	HoverProvider    bool `json:"hoverProvider"`
 	// e.g. CompletionProvider, DefinitionProvider ...
 }
 

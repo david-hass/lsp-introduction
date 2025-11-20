@@ -2,15 +2,15 @@
   "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
   "grammars": [
     {
-      "name": "flowlangparser",
-      "camelcase": "flowLangParser",
+      "name": "flow",
+      "camelcase": "flow",
       "title": "flowlang parser",
-      "scope": "source.flowlangparser",
+      "scope": "source.flow",
       "file-types": [
         "flow"
       ],
-      "injection-regex": "^flowlangparser$",
-      "class-name": "TreeSitterFlowlangparser"
+      "injection-regex": "^flow$",
+      "class-name": "TreeSitterFlow"
     }
   ],
   "metadata": {

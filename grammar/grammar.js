@@ -1,9 +1,9 @@
 module.exports = grammar({
-  name: 'flowlang',
+  name: 'flow',
 
   extras: $ => [
     $.comment,
-    /\s/ 
+    /\s/
   ],
 
   rules: {
@@ -18,17 +18,13 @@ module.exports = grammar({
     source_definition: $ => seq(
       'source',
       field('name', $.string_literal),
-      '{',
       field('body', $.block_body),
-      '}'
     ),
 
     task_definition: $ => seq(
       'task',
       field('name', $.string_literal),
-      '{',
       field('body', $.block_body),
-      '}'
     ),
 
     sink_definition: $ => seq(
@@ -38,10 +34,10 @@ module.exports = grammar({
     ),
 
     block_body: $ => seq(
-            '{',
-            repeat($.key_value_pair),
-            '}'
-        ),
+      '{',
+      repeat($.key_value_pair),
+      '}'
+    ),
 
     key_value_pair: $ => seq(
       field('key', $.identifier),
