@@ -18,41 +18,71 @@ module.exports = grammar({
     source_definition: $ => seq(
       'source',
       field('name', $.string_literal),
-      field('body', $.block_body),
+      $.source_body
     ),
     source_body: $ => seq(
       '{',
       repeat($.key_value_pair),
+      $.source_body_path,
+      repeat($.key_value_pair),
       '}'
+    ),
+    source_body_path: $ => seq(
+      'path',
+      ':',
+      field('path', $.string_literal),
     ),
 
     task_definition: $ => seq(
       'task',
       field('name', $.string_literal),
-      field('body', $.block_body),
+      $.task_body
     ),
     task_body: $ => seq(
       '{',
       repeat($.key_value_pair),
+      $.task_body_input,
+      repeat($.key_value_pair),
+      $.task_body_transformer,
+      repeat($.key_value_pair),
       '}'
+    ),
+    task_body_input: $ => seq(
+      'input',
+      ':',
+      field('input', $.identifier),
+    ),
+    task_body_transformer: $ => seq(
+      'transformer',
+      ':',
+      field('transformer', $.string_literal),
     ),
 
     sink_definition: $ => seq(
       'sink',
       field('name', $.string_literal),
-      field('body', $.block_body),
+      $.sink_body
     ),
     sink_body: $ => seq(
       '{',
       repeat($.key_value_pair),
-      '}'
-    ),
-
-    block_body: $ => seq(
-      '{',
+      $.sink_body_input,
+      repeat($.key_value_pair),
+      $.sink_body_path,
       repeat($.key_value_pair),
       '}'
     ),
+    sink_body_input: $ => seq(
+      'input',
+      ':',
+      field('input', $.identifier),
+    ),
+    sink_body_path: $ => seq(
+      'path',
+      ':',
+      field('path', $.string_literal),
+    ),
+
 
     key_value_pair: $ => seq(
       field('key', $.identifier),

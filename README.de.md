@@ -7,29 +7,28 @@ Eine einfache (Proof-of-Concept-)Sprache zur Definition von Datenverarbeitungs-P
 
 Sie definiert, woher die Daten stammen (Quelle):
 ```hcl
-source „raw_user_data“ {
-    provider: file
-    path: „/data/users.csv“
+source "raw_user_data" {
+    file: "/data/users.csv"
+    encoding: "utf-8"
 }
 ```
 
 welche Transformationen (Task) darauf angewendet werden:
 ```hcl
-task „filter_active_users“ {
-    # Nimmt Output von „raw_user_data“ als Input
-    input: „raw_user_data“
-    transformer: „filter_by_column ‚status‘ == ‚active‘“
+task "filter_active_users" {
+    # Nimmt Output von "raw_user_data" als Input
+    input: raw_user_data
+    transformer: "filter_by_column 'status' == 'active'"
 }
 ```
 
 
 und wohin sie fließen (Sink):
 ```hcl
-sink „active_user_report“ {
-    # Nimmt Output von „filter_active_users“ als Input
-    input: „filter_active_users“
-    target: file
-    path: „/reports/active_users.json“
+sink "active_user_report" {
+    # Nimmt den Output des Anonymisierungs-Tasks
+    input: filter_active_users
+    path: "/reports/active_users.json"
 }
 ```
 
