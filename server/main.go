@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/david-hass/lsp-introduction/parser"
 	sitter "github.com/tree-sitter/go-tree-sitter"
@@ -17,14 +18,18 @@ var (
 	flowLang *sitter.Language
 )
 
+// lsp communication is done via stdin/stdout
+
 func main() {
-	// lsp communicates via stdin/stdout
-	f, err := os.OpenFile("/tmp/flow_lsp.log", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
+
+	logFilePath := filepath.Join(os.TempDir(), "flow_lsp.log")
+	f, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
 	if err != nil {
 		log.Fatalf("failed to open log file: %v", err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
+
 	log.Println("--- flowlang server started ---")
 
 	tsParser = sitter.NewParser()

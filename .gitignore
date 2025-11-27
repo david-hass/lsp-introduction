@@ -1,0 +1,5 @@
+grammar/node_modules
+grammar/build
+vscode/node_modules
+server/flow-lsp
+server/go.sum
