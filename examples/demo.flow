@@ -5,7 +5,7 @@ source "raw_user_data" {
 }
 
 # Ein Task, der die Daten filtert
-task "filter_active_useras" {
+task "filter_active_users" {
     # Nimmt Output von "raw_user_data" als Input
     input: raw_user_data
     transformer: "filter_by_column 'status' == 'active'"
@@ -13,7 +13,7 @@ task "filter_active_useras" {
 
 # Das Ziel, wo die finalen Daten gespeichert werden
 sink "active_user_report" {
-    # Nimmt den Output des Anonymisierungs-Tasks
+    # Nimmt den Output des "filter_active_users" Tasks
     input: filter_active_users
     path: "/reports/active_users.json"
 }
