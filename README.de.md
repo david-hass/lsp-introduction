@@ -1,3 +1,6 @@
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.md)
+[![de](https://img.shields.io/badge/lang-de-yellow.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.de.md)
+
 Eine exemplarische Implementierung des Language Server Protocols in **Go**.  
 Dieses Projekt demonstriert die Funktionsweise moderner IDE-Features, indem ein eigener Language Server für eine eigene Domain Specific Language, genannt **Flow**, entwickelt wurde.  
 Die Implementierung nutzt einen per Tree-sitter generierten Parser. Glücklicherweise erzeugt Tree-sitter neben dem Parser auch zugehörige Bindings für diverse Sprachen, darunter auch Go.  
