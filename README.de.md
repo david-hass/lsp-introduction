@@ -41,7 +41,7 @@ task "filter_active_users" {
 und wohin die Daten transportiert werden (sink):  
 ```hcl
 sink "active_user_report" {  
-    # Nimmt den Output des Anonymisierungs-Tasks  
+    # Nimmt den Output des filter_active_users Tasks  
     input: filter_active_users  
     path: "/reports/active_users.json"  
 }
