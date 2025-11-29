@@ -1,12 +1,48 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.md)
 [![de](https://img.shields.io/badge/lang-de-yellow.svg)](https://github.com/david-hass/lsp-introduction/blob/main/README.de.md)
 
+## Vorwort
+
 Eine exemplarische Implementierung des Language Server Protocols in **Go**.  
 Dieses Projekt demonstriert die Funktionsweise moderner IDE-Features, indem ein eigener Language Server für eine eigene Domain Specific Language, genannt **Flow**, entwickelt wurde.  
 Die Implementierung nutzt einen per Tree-sitter generierten Parser. Glücklicherweise erzeugt Tree-sitter neben dem Parser auch zugehörige Bindings für diverse Sprachen, darunter auch Go.  
 Zudem wurde das Go-Package github.com/tree-sitter/go-tree-sitter genutzt, welches eine Reihe von Funktionalitäten zur Verwendung eines solchen Parsers bietet.
 
 Auf weitere Abhängigkeiten, beispielsweise vorgefertigte Implementierungen des Protokolls oder Ähnliches wurde bewusst verzichtet, da das Ziel dieses Projekts das Verstehen des LSPs ist und Abstraktionen fremder Bibliotheken daher kontraproduktiv wirken.
+
+Zunächst werden ein paar grundlegende Begrifflichkeiten erklärt:
+
+
+### Language Server
+Ein Language Server ist zuständig für verschiedene sprachspezifische Funktionen (code intelligence tools) und arbeitet unabhängig vom Editor. 
+Eine Reihe gängiger Aufgaben, die ein Language Server erfüllt, sind:
+- Codevervollständigung (IntelliSense): Schlägt während der Eingabe passende Code-Elemente vor.
+- Fehler- und Warnungsdiagnose: Markiert Fehler und potenzielle Probleme direkt im Code.
+- Code-Navigation: Hilft beim Auffinden von Definitionen und Verweisen auf Symbole.
+- Formatierung: Formatiert den Code automatisch nach bestimmten Regeln
+
+Der Client ist der Editor selbst. Beim Öffnen oder Bearbeiten einer Datei oder bei anderen bestimmten Benutzerinteraktionen sendet der Client Nachrichten, welche den Language Server über die Ereignisse informiert und ihm ermöglicht, entsprechend zu reagieren.
+
+
+### Zweck des LSP
+Das Language Server Protocol (LSP) dient dazu, die Kommunikation zwischen einem Texteditor oder einer IDE, als Client fungierend, und einem Language Server zu standardisieren. Dadurch kann ein einziger Language Server für eine Programmiersprache entwickelt werden, welcher dann von vielen verschiedenen Editoren genutzt werden kann, die das LSP implementieren.
+Diese Standardisierung löst das „M-mal-N-Problem“, bei dem für jede Kombination aus Editor und Sprache eine spezielle Lösung entwickelt werden musste. Des Weiteren entkoppelt es alle sprachanalytischen Aufgaben von der Benutzeroberfläche des Editors.
+
+![lsp vs no-lsp](lsp-languages-editors.jpg)
+*https://code.visualstudio.com/assets/api/language-extensions/language-server-extension-guide/lsp-languages-editors.png*
+
+
+### Go für die Language Server Entwicklung
+Language Server werden oft on demand von Editoren gestartet oder mehrfach parallel betrieben. Go-Programme starten extrem schnell, brauchen (i.d.R.) wenig RAM und haben einen geringen CPU-Footprint.
+Außerdem ist Cross-Compilation out of the box geboten und das einzelne statisch gelinktes Binary vereinfacht die Distribution maßgeblich.
+
+
+### Tree-sitter
+Tree-sitter setzt sich aus zwei Hauptkomponenten zusammen: Zum einen der Parsergenerator und zum anderen eine inkrementelle Parsing-Bibliothek, die [Syntaxbäume](https://en.wikipedia.org/wiki/Parse_tree) für Quellcode erstellt und diese bei Änderungen effizient aktualisiert. Es ermöglicht Programmen, wie zum Beispiel Editoren oder Language Servern, den Code nicht nur zeilenweise zu analysieren, sondern eine strukturierte, baumartige Darstellung zu erhalten und diese mittels sogenannten Tree-sitter-Queries abzufragen.
+Natives inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird.
+
+
+## Projektumsetzung
 
 ### **Projektstruktur**
 ```
@@ -16,6 +52,7 @@ Auf weitere Abhängigkeiten, beispielsweise vorgefertigte Implementierungen des 
 ├── vscode/     # Der VS Code Client (TypeScript Extension)  
 └── examples/   # Beispiel-Dateien (.flow)
 ```
+
 
 ### **FlowLang**
 
@@ -50,12 +87,16 @@ sink "active_user_report" {
 Die Grammatik ist bewusst einfach gehalten; auf explizite Präzedenzregeln oder komplexe Konfliktlösungen (Ambiguitäten) wurde verzichtet.  
 Der Server analysiert den vom Tree-sitter-Parser erzeugten CST (Concrete Syntax Tree) und stellt Editoren über das LSP verschiedene Features bereit.
 
+
 ### **Implementierte Features**
 
 1. [Contextual Hover](https://github.com/david-hass/lsp-introduction/blob/main/server/hover.go) (textDocument/hover)  
-   Bewege den Mauszeiger über Schlüsselwörter wie sink, task usw., um Dokumentation zur Syntax zu erhalten.  
-2. [Semantische Diagnose](https://github.com/david-hass/lsp-introduction/blob/main/server/diagnostics.go) (textDocument/publishDiagnostics)  
-   Der Server prüft logische Referenzen. Wenn z.B. ein task in input verwendet wird, der nicht existiert, wird dies als Fehler markiert.
+   Wenn der Mauszeiger über Schlüsselwörter wie sink, task usw. bewegt wird, erhält der Nutzer textuelle Informationen zur Syntax.
+   Der Language Server ermittelt über die Cursorposition, welches Node im Syntaxbaum betroffen ist und über dessen Typ, welche Textinformationen an den Client geliefert werden müssen.
+3. [Semantische Diagnose](https://github.com/david-hass/lsp-introduction/blob/main/server/diagnostics.go) (textDocument/publishDiagnostics)  
+   Der Server prüft logische Referenzen. Wenn zum Beispiel ein task als input verwendet wird, der nicht definiert wurde, wird dies als Fehler markiert.
+   Beim Öffnen oder Ändern eines Dokuments, sammelt der Language Server zuerst die Definitionen, dann die Referenzierungen und gleicht diese im Anschluss miteinander ab.
+
 
 ### **Build & Installation**
 
@@ -65,6 +106,7 @@ Das Projekt wurde unter folgender Umgebung entwickelt:
 * Go 1.25.1  
 * npm 11.6.1  
 * gcc 15.2.1
+
 
 1. #### Grammatik generieren (Optional)
 
@@ -76,6 +118,7 @@ Das Projekt wurde unter folgender Umgebung entwickelt:
     ```
     Danach müssen die Dateien manuell nach ../server/parser/ kopiert werden  
     Alternativ das Skript nutzen: ../server/copyparser.sh
+
 
 2. #### Server bauen
 
@@ -92,6 +135,7 @@ Das Projekt wurde unter folgender Umgebung entwickelt:
     2025/11/27 12:29:21 tree sitter parser loaded.
     2025/11/27 12:29:21 flow tree sitter parser loaded
     ```
+
 
 ### **Integration in Neovim**
 
@@ -110,6 +154,7 @@ vim.lsp.config.flow = {
 vim.lsp.enable('flow')
 ```
 Bei Problemen verweise ich auf: ``:h lsp-config``
+
 
 ### **Integration in VS Code**
 
