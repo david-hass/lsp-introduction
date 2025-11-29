@@ -93,7 +93,7 @@ Der Server analysiert den vom Tree-sitter-Parser erzeugten CST (Concrete Syntax 
 1. [Contextual Hover](https://github.com/david-hass/lsp-introduction/blob/main/server/hover.go) (textDocument/hover)  
    Wenn der Mauszeiger über Schlüsselwörter wie sink, task usw. bewegt wird, erhält der Nutzer textuelle Informationen zur Syntax.
    Der Language Server ermittelt über die Cursorposition, welches Node im Syntaxbaum betroffen ist und über dessen Typ, welche Textinformationen an den Client geliefert werden müssen.
-3. [Semantische Diagnose](https://github.com/david-hass/lsp-introduction/blob/main/server/diagnostics.go) (textDocument/publishDiagnostics)  
+2. [Semantische Diagnose](https://github.com/david-hass/lsp-introduction/blob/main/server/diagnostics.go) (textDocument/publishDiagnostics)  
    Der Server prüft logische Referenzen. Wenn zum Beispiel ein task als input verwendet wird, der nicht definiert wurde, wird dies als Fehler markiert.
    Beim Öffnen oder Ändern eines Dokuments, sammelt der Language Server zuerst die Definitionen, dann die Referenzierungen und gleicht diese im Anschluss miteinander ab.
 
