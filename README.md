@@ -42,6 +42,9 @@ Tree-sitter consists of two main components: the parser generator and an increme
 Native incremental parsing makes it possible to efficiently update the syntax tree when small changes are made to the source code, instead of rebuilding it from scratch. Tree-sitter can also parse temporarily faulty code by isolating errors so that the rest of the file is processed and displayed correctly.
 
 
+## Implementation
+
+
 ### **Project structure**
 ```
 .  
