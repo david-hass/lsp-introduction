@@ -1,5 +1,10 @@
 [
   {
+    "type": "boolean",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "key_value_pair",
     "named": true,
     "fields": {
@@ -18,7 +23,15 @@
         "required": true,
         "types": [
           {
+            "type": "boolean",
+            "named": true
+          },
+          {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "number",
             "named": true
           },
           {
@@ -30,30 +43,7 @@
     }
   },
   {
-    "type": "sink_body",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "key_value_pair",
-          "named": true
-        },
-        {
-          "type": "sink_body_input",
-          "named": true
-        },
-        {
-          "type": "sink_body_path",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "sink_body_input",
+    "type": "prop_input",
     "named": true,
     "fields": {
       "input": {
@@ -69,7 +59,7 @@
     }
   },
   {
-    "type": "sink_body_path",
+    "type": "prop_path",
     "named": true,
     "fields": {
       "path": {
@@ -82,6 +72,45 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "prop_transformer",
+    "named": true,
+    "fields": {
+      "transformer": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "sink_body",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "key_value_pair",
+          "named": true
+        },
+        {
+          "type": "prop_input",
+          "named": true
+        },
+        {
+          "type": "prop_path",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -116,33 +145,17 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "key_value_pair",
           "named": true
         },
         {
-          "type": "source_body_path",
+          "type": "prop_path",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "source_body_path",
-    "named": true,
-    "fields": {
-      "path": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string_literal",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -201,53 +214,21 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "key_value_pair",
           "named": true
         },
         {
-          "type": "task_body_input",
+          "type": "prop_input",
           "named": true
         },
         {
-          "type": "task_body_transformer",
+          "type": "prop_transformer",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "task_body_input",
-    "named": true,
-    "fields": {
-      "input": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "task_body_transformer",
-    "named": true,
-    "fields": {
-      "transformer": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string_literal",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -286,12 +267,20 @@
     "extra": true
   },
   {
+    "type": "false",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
   {
     "type": "input",
     "named": false
+  },
+  {
+    "type": "number",
+    "named": true
   },
   {
     "type": "path",
@@ -315,6 +304,10 @@
   },
   {
     "type": "transformer",
+    "named": false
+  },
+  {
+    "type": "true",
     "named": false
   },
   {
