@@ -20,17 +20,14 @@ module.exports = grammar({
       field('name', $.string_literal),
       $.source_body
     ),
+
     source_body: $ => seq(
       '{',
-      repeat($.key_value_pair),
-      $.source_body_path,
-      repeat($.key_value_pair),
+      repeat(choice(
+        $.prop_path,
+        $.key_value_pair
+      )),
       '}'
-    ),
-    source_body_path: $ => seq(
-      'path',
-      ':',
-      field('path', $.string_literal),
     ),
 
     task_definition: $ => seq(
@@ -38,24 +35,15 @@ module.exports = grammar({
       field('name', $.string_literal),
       $.task_body
     ),
+
     task_body: $ => seq(
       '{',
-      repeat($.key_value_pair),
-      $.task_body_input,
-      repeat($.key_value_pair),
-      $.task_body_transformer,
-      repeat($.key_value_pair),
+      repeat(choice(
+        $.prop_input,
+        $.prop_transformer,
+        $.key_value_pair
+      )),
       '}'
-    ),
-    task_body_input: $ => seq(
-      'input',
-      ':',
-      field('input', $.identifier),
-    ),
-    task_body_transformer: $ => seq(
-      'transformer',
-      ':',
-      field('transformer', $.string_literal),
     ),
 
     sink_definition: $ => seq(
@@ -65,24 +53,31 @@ module.exports = grammar({
     ),
     sink_body: $ => seq(
       '{',
-      repeat($.key_value_pair),
-      $.sink_body_input,
-      repeat($.key_value_pair),
-      $.sink_body_path,
-      repeat($.key_value_pair),
+      repeat(choice(
+        $.prop_input,
+        $.prop_path,
+        $.key_value_pair
+      )),
       '}'
     ),
-    sink_body_input: $ => seq(
-      'input',
-      ':',
-      field('input', $.identifier),
-    ),
-    sink_body_path: $ => seq(
+
+    prop_path: $ => seq(
       'path',
       ':',
-      field('path', $.string_literal),
+      field('path', $.string_literal)
     ),
 
+    prop_input: $ => seq(
+      'input',
+      ':',
+      field('input', $.identifier)
+    ),
+
+    prop_transformer: $ => seq(
+      'transformer',
+      ':',
+      field('transformer', $.string_literal)
+    ),
 
     key_value_pair: $ => seq(
       field('key', $.identifier),
@@ -92,10 +87,10 @@ module.exports = grammar({
 
     _value: $ => choice(
       $.string_literal,
-      $.identifier
+      $.identifier,
+      $.number,
+      $.boolean
     ),
-
-    // --- terminal symbols ---
 
     identifier: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
@@ -104,6 +99,9 @@ module.exports = grammar({
       repeat(choice(/[^"\\]/, /\\./)),
       '"'
     )),
+
+    number: $ => /\d+/,
+    boolean: $ => choice('true', 'false'),
 
     comment: $ => token(seq('#', /.*/))
   }
