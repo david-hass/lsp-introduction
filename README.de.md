@@ -3,7 +3,7 @@
 
 ## Vorwort
 
-Eine exemplarische Implementierung des Language Server Protocols in **Go**.  
+Eine exemplarische Implementierung des Language Server Protocols (LSP) in **Go**.  
 Dieses Projekt demonstriert die Funktionsweise moderner IDE-Features, indem ein eigener Language Server für eine eigene Domain Specific Language, genannt **Flow**, entwickelt wurde.  
 Die Implementierung nutzt einen per Tree-sitter generierten Parser. Glücklicherweise erzeugt Tree-sitter neben dem Parser auch zugehörige Bindings für diverse Sprachen, darunter auch Go.  
 Zudem wurde das Go-Package github.com/tree-sitter/go-tree-sitter genutzt, welches eine Reihe von Funktionalitäten zur Verwendung eines solchen Parsers bietet.
@@ -86,6 +86,31 @@ sink "active_user_report" {
 
 Die Grammatik ist bewusst einfach gehalten; auf explizite Präzedenzregeln oder komplexe Konfliktlösungen (Ambiguitäten) wurde verzichtet.  
 Der Server analysiert den vom Tree-sitter-Parser erzeugten CST (Concrete Syntax Tree) und stellt Editoren über das LSP verschiedene Features bereit.
+
+
+### Die Grammatik (EBNF)
+
+```
+source_file       ::= { definition }
+
+definition        ::= source_definition | task_definition | sink_definition
+
+source_definition ::= "source" string_literal source_body
+source_body       ::= "{" { prop_path | key_value_pair } "}"
+
+task_definition   ::= "task" string_literal task_body
+task_body         ::= "{" { prop_input | prop_transformer | key_value_pair } "}"
+
+sink_definition   ::= "sink" string_literal sink_body
+sink_body         ::= "{" { prop_input | prop_path | key_value_pair } "}"
+
+prop_path         ::= "path" ":" string_literal
+prop_input        ::= "input" ":" identifier
+prop_transformer  ::= "transformer" ":" string_literal
+
+key_value_pair    ::= identifier ":" value
+value             ::= string_literal | identifier | number | boolean
+```
 
 
 ### **Implementierte Features**
