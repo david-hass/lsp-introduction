@@ -37,6 +37,27 @@ Language Server werden oft on demand von Editoren gestartet oder mehrfach parall
 Außerdem ist Cross-Compilation out of the box geboten und das einzelne statisch gelinktes Binary vereinfacht die Distribution maßgeblich.
 
 
+### Client/Server Kommunikation
+Im Gegensatz zu klassischen Webservern kommunizieren Language Server üblicherweise nicht über TCP/HTTP, sondern über Standard Input (Stdin) und Standard Output (Stdout).
+
+Das bedeutet:
+1. Der Editor (Client) startet den Language-Server-Prozess.
+2. Request: Der Editor schreibt die JSON-RPC-Nachrichten direkt in den stdin des laufenden Go-Prozesses.
+3. Response: Der Go-Prozess schreibt seine Antworten in den stdout.
+4. Der Editor liest stdout mit und verarbeitet die Antwort.
+
+Da es sich um einen kontinuierlichen Datenstrom handelt, muss der Server wissen, wann eine Nachricht endet. Das LSP nutzt hierfür – ähnlich wie HTTP – einen Content-Length Header.
+```
+Content-Length: 154\r\n
+\r\n
+{
+    "jsonrpc": "2.0",
+    ...
+}
+```
+
+
+
 ### Tree-sitter
 Tree-sitter setzt sich aus zwei Hauptkomponenten zusammen: Zum einen der Parsergenerator und zum anderen eine inkrementelle Parsing-Bibliothek, die [Syntaxbäume](https://en.wikipedia.org/wiki/Parse_tree) für Quellcode erstellt und diese bei Änderungen effizient aktualisiert. Es ermöglicht Programmen, wie zum Beispiel Editoren oder Language Servern, den Code nicht nur zeilenweise zu analysieren, sondern eine strukturierte, baumartige Darstellung zu erhalten und diese mittels sogenannten Tree-sitter-Queries abzufragen.
 Natives inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird.
