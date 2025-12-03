@@ -60,7 +60,13 @@ Content-Length: 154\r\n
 
 ### Tree-sitter
 Tree-sitter setzt sich aus zwei Hauptkomponenten zusammen: Zum einen der Parsergenerator und zum anderen eine inkrementelle Parsing-Bibliothek, die [Syntaxbäume](https://en.wikipedia.org/wiki/Parse_tree) für Quellcode erstellt und diese bei Änderungen effizient aktualisiert. Es ermöglicht Programmen, wie zum Beispiel Editoren oder Language Servern, den Code nicht nur zeilenweise zu analysieren, sondern eine strukturierte, baumartige Darstellung zu erhalten und diese mittels sogenannten Tree-sitter-Queries abzufragen.
-Natives inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird.
+
+Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen Details des Quellcodes beinhaltet. Abstract Syntax Trees (AST) hingegen abstrahieren von diesen Details, da sie sich nur auf die logische und semantische Struktur des Codes konzentrieren. Ein AST würde z. B. das Semikolon am Ende einer Anweisung oder die Klammern um eine Bedingung nicht repräsentieren. Tree-sitter wurde stark für Editor- und Tooling-Zwecke entwickelt (Syntax-Hervorhebung, Code-Faltung, intelligente Navigation, Refactoring), weshalb die exakte Position und das Vorhandensein jedes Tokens im Quellcode entscheidend ist.
+
+Inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird. 
+
+Tree-sitter verwendet intern einen [Generalized-left-to-right-Algorithmus (GLR)](https://en.wikipedia.org/wiki/GLR_parser), um den Parservorgang durchzuführen. GLR ist eine Erweiterung der klassischen [LR-Parser (Bottom-up-Parser)](https://en.wikipedia.org/wiki/LR_parser). Während traditionelle LR-Parser nur eindeutige (nicht-mehrdeutige) Grammatiken verarbeiten können, ermöglicht GLR das Parsen von mehrdeutigen Grammatiken.
+
 
 
 ## Projektumsetzung
