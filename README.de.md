@@ -10,7 +10,7 @@ Zudem wurde das Go-Package github.com/tree-sitter/go-tree-sitter genutzt, welche
 
 Auf weitere Abhängigkeiten, beispielsweise vorgefertigte Implementierungen des Protokolls oder Ähnliches wurde bewusst verzichtet, da das Ziel dieses Projekts das Verstehen des LSPs ist und Abstraktionen fremder Bibliotheken daher kontraproduktiv wirken.
 
-Zunächst werden ein paar grundlegende Begrifflichkeiten erklärt:
+Zunächst werden ein paar grundlegende Begrifflichkeiten erklärt und warum sich für die eingesetzten Technologien entschieden wurde:
 
 
 ### Language Server
@@ -19,12 +19,13 @@ Eine Reihe gängiger Aufgaben, die ein Language Server erfüllt, sind:
 - Codevervollständigung (IntelliSense): Schlägt während der Eingabe passende Code-Elemente vor.
 - Fehler- und Warnungsdiagnose: Markiert Fehler und potenzielle Probleme direkt im Code.
 - Code-Navigation: Hilft beim Auffinden von Definitionen und Verweisen auf Symbole.
+- Hover-Informationen: Zeigt Informationen zu dem Codeelement, an dem sich der Cursor momentan befindet.
 - Formatierung: Formatiert den Code automatisch nach bestimmten Regeln
 
-Der Client ist der Editor selbst. Beim Öffnen oder Bearbeiten einer Datei oder bei anderen bestimmten Benutzerinteraktionen sendet der Client Nachrichten, welche den Language Server über die Ereignisse informiert und ihm ermöglicht, entsprechend zu reagieren.
+Der Client ist der Editor selbst. Beim Öffnen oder Bearbeiten einer Datei oder bei anderen bestimmten Benutzerinteraktionen sendet der Client Nachrichten, welche den Language Server dazu veranlassen, die entsprechende Funktionalität auszuführen. Falls es sich bei der Nachricht um eine Anfrage handelt, muss der Server außerdem demgemäß antworten, nicht so bei einer Benachrichtigung.
 
 
-### Zweck des LSP
+### LSP
 Das Language Server Protocol (LSP) dient dazu, die Kommunikation zwischen einem Texteditor oder einer IDE, als Client fungierend, und einem Language Server zu standardisieren. Dadurch kann ein einziger Language Server für eine Programmiersprache entwickelt werden, welcher dann von vielen verschiedenen Editoren genutzt werden kann, die das LSP implementieren.
 Diese Standardisierung löst das „M-mal-N-Problem“, bei dem für jede Kombination aus Editor und Sprache eine spezielle Lösung entwickelt werden musste. Des Weiteren entkoppelt es alle sprachanalytischen Aufgaben von der Benutzeroberfläche des Editors.
 
@@ -61,9 +62,9 @@ Content-Length: 154\r\n
 ### Tree-sitter
 Tree-sitter setzt sich aus zwei Hauptkomponenten zusammen: Zum einen der Parsergenerator und zum anderen eine inkrementelle Parsing-Bibliothek, die [Syntaxbäume](https://en.wikipedia.org/wiki/Parse_tree) für Quellcode erstellt und diese bei Änderungen effizient aktualisiert. Es ermöglicht Programmen, wie zum Beispiel Editoren oder Language Servern, den Code nicht nur zeilenweise zu analysieren, sondern eine strukturierte, baumartige Darstellung zu erhalten und diese mittels sogenannten Tree-sitter-Queries abzufragen.
 
-Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen Details des Quellcodes beinhaltet. Abstract Syntax Trees (AST) hingegen abstrahieren von diesen Details, da sie sich nur auf die logische und semantische Struktur des Codes konzentrieren. Ein AST würde z. B. das Semikolon am Ende einer Anweisung oder die Klammern um eine Bedingung nicht repräsentieren. Tree-sitter wurde stark für Editor- und Tooling-Zwecke entwickelt (Syntax-Hervorhebung, Code-Faltung, intelligente Navigation, Refactoring), weshalb die exakte Position und das Vorhandensein jedes Tokens im Quellcode entscheidend ist.
-
 Inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird. 
+
+Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen Details des Quellcodes beinhaltet. Ein Abstract Syntax Trees (AST) hingegen abstrahieren von diesen Details, da sie sich nur auf die logische und semantische Struktur des Codes konzentrieren. Ein AST würde z. B. das Semikolon am Ende einer Anweisung oder die Klammern um eine Bedingung nicht repräsentieren. Tree-sitter wurde stark für Editor- und Tooling-Zwecke entwickelt (Syntax-Hervorhebung, Code-Faltung, intelligente Navigation, Refactoring), weshalb die exakte Position und das Vorhandensein jedes Tokens im Quellcode entscheidend ist.
 
 Tree-sitter verwendet intern einen [Generalized-left-to-right-Algorithmus (GLR)](https://en.wikipedia.org/wiki/GLR_parser), um den Parservorgang durchzuführen. GLR ist eine Erweiterung der klassischen [LR-Parser (Bottom-up-Parser)](https://en.wikipedia.org/wiki/LR_parser). Während traditionelle LR-Parser nur eindeutige (nicht-mehrdeutige) Grammatiken verarbeiten können, ermöglicht GLR das Parsen von mehrdeutigen Grammatiken.
 
@@ -111,11 +112,9 @@ sink "active_user_report" {
 }
 ```
 
-Die Grammatik ist bewusst einfach gehalten; auf explizite Präzedenzregeln oder komplexe Konfliktlösungen (Ambiguitäten) wurde verzichtet.  
-Der Server analysiert den vom Tree-sitter-Parser erzeugten CST (Concrete Syntax Tree) und stellt Editoren über das LSP verschiedene Features bereit.
-
 
 ### Die Grammatik (EBNF)
+Die Grammatik ist bewusst einfach gehalten; auf explizite Präzedenzregeln oder komplexe Konfliktlösungen (Ambiguitäten) wurde verzichtet.  
 
 ```
 source_file       ::= { definition }
