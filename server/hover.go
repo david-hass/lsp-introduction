@@ -32,20 +32,18 @@ func hoverFeature(textDocument TextDocumentIdentifier,position     Position) (*H
 	switch node.Kind() {
 	case "source_definition":
 		hoverText = "defines a **source**."
-	case "source_body_path":
+	case "source_prop_path":
 		hoverText = "specifies the file path from which the data should be read."
 	case "task_definition":
 		hoverText = "defines a **task** in the pipeline."
-	case "task_body_input":
-		hoverText = "specifies where the input data comes from."
-	case "task_body_transformer":
+	case "prop_transformer":
 		hoverText = "specifies how the data is to be processed."
 	case "sink_definition":
 		hoverText = "defines the **sink**, where the data is stored."
-	case "sink_body_input":
-		hoverText = "specifies where the input data comes from."
-	case "sink_body_path":
+	case "sink_prop_path":
 		hoverText = "specifies the file path where the data is saved to."
+	case "prop_input":
+		hoverText = "specifies where the input data comes from."
 	case "identifier":
 		start := node.StartByte()
 		end := node.EndByte()

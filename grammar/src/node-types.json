@@ -59,22 +59,6 @@
     }
   },
   {
-    "type": "prop_path",
-    "named": true,
-    "fields": {
-      "path": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "string_literal",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "prop_transformer",
     "named": true,
     "fields": {
@@ -107,7 +91,7 @@
           "named": true
         },
         {
-          "type": "prop_path",
+          "type": "sink_prop_path",
           "named": true
         }
       ]
@@ -140,6 +124,22 @@
     }
   },
   {
+    "type": "sink_prop_path",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "source_body",
     "named": true,
     "fields": {},
@@ -152,7 +152,7 @@
           "named": true
         },
         {
-          "type": "prop_path",
+          "type": "source_prop_path",
           "named": true
         }
       ]
@@ -206,6 +206,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "source_prop_path",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

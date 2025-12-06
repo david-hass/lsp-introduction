@@ -24,10 +24,16 @@ module.exports = grammar({
     source_body: $ => seq(
       '{',
       repeat(choice(
-        $.prop_path,
+        $.source_prop_path,
         $.key_value_pair
       )),
       '}'
+    ),
+
+    source_prop_path: $ => seq(
+      'path',
+      ':',
+      field('path', $.string_literal)
     ),
 
     task_definition: $ => seq(
@@ -55,13 +61,13 @@ module.exports = grammar({
       '{',
       repeat(choice(
         $.prop_input,
-        $.prop_path,
+        $.sink_prop_path,
         $.key_value_pair
       )),
       '}'
     ),
 
-    prop_path: $ => seq(
+    sink_prop_path: $ => seq(
       'path',
       ':',
       field('path', $.string_literal)

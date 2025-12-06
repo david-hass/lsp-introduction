@@ -8,7 +8,6 @@ import (
 	sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
-// Syntax: (node_typ field_name: (kind_type) @capture_name)
 const definitionsQueryStr = `
 		(source_definition name: (string_literal) @def.name)
 		(task_definition   name: (string_literal) @def.name)
@@ -16,11 +15,10 @@ const definitionsQueryStr = `
 	`
 
 const referencesQueryStr = `
-		(task_body_input input: (identifier) @def.input)
-		(sink_body_input input: (identifier) @def.input)
-	`
+		(prop_input input: (identifier) @ref.name)
+`
 
-func diagnosticsFeature(_ context.Context, uri string, content string) *DiagnosticsResponse{
+func diagnosticsFeature(_ context.Context, uri string, content string) *DiagnosticsResponse {
 	sourceBytes := []byte(content)
 
 	// parse document
@@ -96,7 +94,7 @@ func checkForInvalidReferences(root *sitter.Node, sourceBytes []byte, definedNam
 
 		for _, capture := range match.Captures {
 			if capture.Node.Kind() == "identifier" {
-				start := capture.Node.StartByte() // VAL NODE IST NULL
+				start := capture.Node.StartByte()
 				end := capture.Node.EndByte()
 
 				if end > uint(len(sourceBytes)) {

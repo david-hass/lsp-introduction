@@ -61,7 +61,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "prop_path"
+                "name": "source_prop_path"
               },
               {
                 "type": "SYMBOL",
@@ -73,6 +73,27 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "source_prop_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "path"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "path",
+          "content": {
+            "type": "SYMBOL",
+            "name": "string_literal"
+          }
         }
       ]
     },
@@ -169,7 +190,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "prop_path"
+                "name": "sink_prop_path"
               },
               {
                 "type": "SYMBOL",
@@ -184,7 +205,7 @@
         }
       ]
     },
-    "prop_path": {
+    "sink_prop_path": {
       "type": "SEQ",
       "members": [
         {
