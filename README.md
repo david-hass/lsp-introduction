@@ -153,7 +153,80 @@ value             ::= string_literal | identifier | number | boolean
 
 
 
-### **Build & Installation**
+
+## LSP request process
+
+The process from user interaction and request to the server to server response and response processing is outlined below using the **hover feature** as an example:
+
+#### 1. The action (editor)
+
+The user moves the cursor over the word source in the demo.flow file. 
+```hcl
+ hover over “c”
+    ↓
+source “raw_user_data” {  
+    path: “/data/users.csv”  
+    encoding: “utf-8”  
+}
+```
+
+
+The editor (VS Code / Neovim) notices this and generates a **JSON-RPC request**.  
+**Request (client -> server):**  
+```
+{  
+    “jsonrpc”: “2.0”,  
+    “id”: 1,  
+    “method”: “textDocument/hover”,  
+    “params”: {  
+        “textDocument”: {  
+            “uri”: “file:///project/examples/demo.flow”  
+        },  
+        “position”: {  
+            “line”: 0,  
+            “character”: 4
+        }  
+    }  
+}
+```
+
+
+
+#### 2. Processing (server)
+
+The flow-lsp server reads this message via **STDIN**.
+
+1. **Function call:** The server sees the textDocument/hover method and calls the corresponding Go function.  
+2. **State lookup:** It fetches the contents of the file from its internal memory (documentStore).  
+3. **Tree-sitter query:**  The node whose source code counterpart can be found at line 1, character 5 is retrieved.
+4. **Generate response:** The type is determined and the appropriate help text is returned (“Defines a data source...”).
+
+#### 3. The response (server)
+
+The server wraps the result in a **JSON-RPC response object** and sends it back via **STDOUT**.  
+**Response (server \-\> client):**
+```
+{  
+    “jsonrpc”: “2.0”,  
+    “id”: 1,  
+    “result”: {  
+        “contents”: {  
+            “kind”: “markdown”,  
+            “value”: “**source** defines a data source”  
+        }  
+    }  
+}
+```
+
+
+
+#### 4. The display (editor)
+
+The editor receives the response, assigns it to the original request based on the id: 1, and renders a floating window at the cursor position with the text content.
+
+
+
+## **Build & Installation**
 
 The project was developed in the following environment:
 
