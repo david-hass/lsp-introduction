@@ -22,12 +22,13 @@ Eine Reihe gängiger Aufgaben, die ein Language Server erfüllt, sind:
 - Hover-Informationen: Zeigt Informationen zu dem Codeelement, an dem sich der Cursor momentan befindet.
 - Formatierung: Formatiert den Code automatisch nach bestimmten Regeln
 
-Der Client ist der Editor selbst. Beim Öffnen oder Bearbeiten einer Datei oder bei anderen bestimmten Benutzerinteraktionen sendet der Client Nachrichten, welche den Language Server dazu veranlassen, die entsprechende Funktionalität auszuführen. Falls es sich bei der Nachricht um eine Anfrage handelt, muss der Server außerdem demgemäß antworten, nicht so bei einer Benachrichtigung.
+Der Client ist der Editor selbst. Beim Öffnen oder Bearbeiten einer Datei oder bei anderen bestimmten Benutzerinteraktionen sendet der Client Nachrichten, welche den Language Server dazu veranlassen, die entsprechende Funktionalität auszuführen.
 
 
 ### LSP
 Das Language Server Protocol (LSP) dient dazu, die Kommunikation zwischen einem Texteditor oder einer IDE, als Client fungierend, und einem Language Server zu standardisieren. Dadurch kann ein einziger Language Server für eine Programmiersprache entwickelt werden, welcher dann von vielen verschiedenen Editoren genutzt werden kann, die das LSP implementieren.
 Diese Standardisierung löst das „M-mal-N-Problem“, bei dem für jede Kombination aus Editor und Sprache eine spezielle Lösung entwickelt werden musste. Des Weiteren entkoppelt es alle sprachanalytischen Aufgaben von der Benutzeroberfläche des Editors.
+Die genaue Spezifikation ist [hier](https://microsoft.github.io/language-server-protocol/specifications/specification-current) zu finden.
 
 ![lsp vs no-lsp](lsp-languages-editors.jpg)
 *https://code.visualstudio.com/assets/api/language-extensions/language-server-extension-guide/lsp-languages-editors.png*
@@ -122,15 +123,16 @@ source_file       ::= { definition }
 definition        ::= source_definition | task_definition | sink_definition
 
 source_definition ::= "source" string_literal source_body
-source_body       ::= "{" { prop_path | key_value_pair } "}"
+source_body       ::= "{" { source_prop_path | key_value_pair } "}"
 
 task_definition   ::= "task" string_literal task_body
 task_body         ::= "{" { prop_input | prop_transformer | key_value_pair } "}"
 
 sink_definition   ::= "sink" string_literal sink_body
-sink_body         ::= "{" { prop_input | prop_path | key_value_pair } "}"
+sink_body         ::= "{" { prop_input | sink_prop_path | key_value_pair } "}"
 
-prop_path         ::= "path" ":" string_literal
+source_prop_path         ::= "path" ":" string_literal
+sink_prop_path         ::= "path" ":" string_literal
 prop_input        ::= "input" ":" identifier
 prop_transformer  ::= "transformer" ":" string_literal
 
