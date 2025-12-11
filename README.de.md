@@ -70,7 +70,6 @@ Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen
 Tree-sitter verwendet intern einen [Generalized-left-to-right-Algorithmus (GLR)](https://en.wikipedia.org/wiki/GLR_parser), um den Parservorgang durchzuführen. GLR ist eine Erweiterung der klassischen [LR-Parser (Bottom-up-Parser)](https://en.wikipedia.org/wiki/LR_parser). Während traditionelle LR-Parser nur eindeutige (nicht-mehrdeutige) Grammatiken verarbeiten können, ermöglicht GLR das Parsen von mehrdeutigen Grammatiken.
 
 
-
 ## Projektumsetzung
 
 ### **Projektstruktur**
@@ -151,7 +150,75 @@ value             ::= string_literal | identifier | number | boolean
    Beim Öffnen oder Ändern eines Dokuments, sammelt der Language Server zuerst die Definitionen, dann die Referenzierungen und gleicht diese im Anschluss miteinander ab.
 
 
-### **Build & Installation**
+## Ablauf einer LSP-Anfrage
+
+Der Ablauf von Nutzerinteraktion und Anfrage an den Server, bis Serverantwort und Antwortverarbeitung am Beispiel des **Hover-Features** wird im folgenden skizziert:
+
+#### 1. Die Aktion (Editor)
+
+Der Benutzer bewegt den Cursor in der Datei demo.flow über das Wort source. 
+```hcl
+ hover über "c"
+    ↓
+source "raw_user_data" {  
+    path: "/data/users.csv"  
+    encoding: "utf-8"  
+}
+```
+
+
+Der Editor (VS Code / Neovim) bemerkt dies und generiert eine **JSON-RPC Anfrage**.  
+**Request (Client -> Server):**  
+```
+{  
+    "jsonrpc": "2.0",  
+    "id": 1,  
+    "method": "textDocument/hover",  
+    "params": {  
+        "textDocument": {  
+            "uri": "file:///projekt/examples/demo.flow"  
+        },  
+        "position": {  
+            "line": 0,  
+            "character": 4
+        }  
+    }  
+}
+```
+
+#### 2. Die Verarbeitung (Server)
+
+Der flow-lsp Server liest diese Nachricht über **STDIN**.
+
+1. **Funktionsaufruf:** Der Server sieht die Methode textDocument/hover und ruft die entsprechende Go-Funktion auf.  
+2. **State Lookup:** Er holt den Inhalt der Datei aus seinem internen Speicher (documentStore).  
+3. **Tree-sitter Query:**  Es wird der Knoten geholt, dessen Quellcode-Gegenstück an der Stelle Zeile 1, Zeichen 5 zu finden ist.
+4. **Antwort generieren:** Der Typ wird ermittel und der passenden Hilfetext wird zurückgegeben ("Definiert eine Datenquelle...").
+
+#### 3. Die Antwort (Server)
+
+Der Server verpackt das Ergebnis in ein **JSON-RPC Antwort-Objekt** und sendet es über **STDOUT** zurück.  
+**Response (Server \-\> Client):**
+```
+{  
+    "jsonrpc": "2.0",  
+    "id": 1,  
+    "result": {  
+        "contents": {  
+            "kind": "markdown",  
+            "value": "**source** definiert eine Datenquelle"  
+        }  
+    }  
+}
+```
+
+#### 4. Die Darstellung (Editor)
+
+Der Editor empfängt die Antwort, ordnet sie anhand der id: 1 der ursprünglichen Anfrage zu und rendert ein Floating Window an der Cursor-Position mit dem Text-Inhalt.
+
+
+
+## **Build & Installation**
 
 Das Projekt wurde unter folgender Umgebung entwickelt:
 
