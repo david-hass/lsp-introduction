@@ -10,8 +10,7 @@ In addition, the Go package github.com/tree-sitter/go-tree-sitter was used, whic
 
 Other dependencies, such as ready-made implementations of the protocol or similar, were deliberately avoided, as the goal of this project is to understand the LSP and abstractions from third-party libraries would therefore be counterproductive.
 
-First, a few basic terms will be explained:
-
+First, a few basic terms will be explained, along with why the technologies used were chosen:
 
 ### Language Server
 A language server is responsible for various language-specific functions (code intelligence tools) and works independently of the editor. A number of common tasks performed by a language server are:
