@@ -153,6 +153,10 @@ value             ::= string_literal | identifier | number | boolean
 ## Ablauf einer LSP-Anfrage
 
 
+Der Ablauf von Nutzerinteraktion und Anfrage an den Server, bis Serverantwort und Antwortverarbeitung am Beispiel des **Hover-Features** wird im folgenden skizziert:
+
+
+
 ```mermaid
 sequenceDiagram
     User->>Editor: Hover
@@ -160,9 +164,9 @@ sequenceDiagram
     Note right of Server: 1. State Lookup<br/>2. Tree-sitter Query<br/>3. Generate Markdown
     Server-->>Editor: JSON-RPC Response (Markdown)
     Editor-->>User: Floating Window
-````
+```
 
-Der Ablauf von Nutzerinteraktion und Anfrage an den Server, bis Serverantwort und Antwortverarbeitung am Beispiel des **Hover-Features** wird im folgenden skizziert:
+
 
 #### 1. Die Aktion (Editor)
 
