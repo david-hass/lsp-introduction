@@ -158,6 +158,17 @@ value             ::= string_literal | identifier | number | boolean
 
 The process from user interaction and request to the server to server response and response processing is outlined below using the **hover feature** as an example:
 
+
+```mermaid
+sequenceDiagram
+    User->>Editor: Hover
+    Editor->>Server: JSON-RPC: textDocument/hover
+    Note right of Server: 1. State Lookup<br/>2. Tree-sitter Query<br/>3. Generate Markdown
+    Server-->>Editor: JSON-RPC Response (Markdown)
+    Editor-->>User: Floating Window
+
+```
+
 #### 1. The action (editor)
 
 The user moves the cursor over the word source in the demo.flow file. 
