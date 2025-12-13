@@ -65,7 +65,7 @@ Tree-sitter setzt sich aus zwei Hauptkomponenten zusammen: Zum einen der Parserg
 
 Inkrementelles Parsing ermöglicht es, bei kleinen Quellcodeänderungen den Syntaxbaum effizient zu aktualisieren, anstatt ihn von neuem aufzubauen. Tree-sitter kann zudem vorübergehend fehlerhaften Code parsen, indem Fehler isoliert werden, sodass der Rest der Datei korrekt verarbeitet und dargestellt wird. 
 
-Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen Details des Quellcodes beinhaltet. Ein Abstract Syntax Trees (AST) hingegen abstrahieren von diesen Details, da sie sich nur auf die logische und semantische Struktur des Codes konzentrieren. Ein AST würde z. B. das Semikolon am Ende einer Anweisung oder die Klammern um eine Bedingung nicht repräsentieren. Tree-sitter wurde stark für Editor- und Tooling-Zwecke entwickelt (Syntax-Hervorhebung, Code-Faltung, intelligente Navigation, Refactoring), weshalb die exakte Position und das Vorhandensein jedes Tokens im Quellcode entscheidend ist.
+Tree-sitter erzeugt einen Concrete Syntax Tree (CST), welcher alle syntaktischen Details des Quellcodes beinhaltet. Ein Abstract Syntax Trees (AST) hingegen abstrahiert von diesen Details, da sie sich nur auf die logische und semantische Struktur des Codes konzentrieren. Ein AST würde z. B. das Semikolon am Ende einer Anweisung oder die Klammern um eine Bedingung nicht repräsentieren. Tree-sitter wurde stark für Editor- und Tooling-Zwecke entwickelt (Syntax-Hervorhebung, Code-Faltung, intelligente Navigation, Refactoring), weshalb die exakte Position und das Vorhandensein jedes Tokens im Quellcode entscheidend ist.
 
 Tree-sitter verwendet intern einen [Generalized-left-to-right-Algorithmus (GLR)](https://en.wikipedia.org/wiki/GLR_parser), um den Parservorgang durchzuführen. GLR ist eine Erweiterung der klassischen [LR-Parser (Bottom-up-Parser)](https://en.wikipedia.org/wiki/LR_parser). Während traditionelle LR-Parser nur eindeutige (nicht-mehrdeutige) Grammatiken verarbeiten können, ermöglicht GLR das Parsen von mehrdeutigen Grammatiken.
 
@@ -151,6 +151,16 @@ value             ::= string_literal | identifier | number | boolean
 
 
 ## Ablauf einer LSP-Anfrage
+
+
+```mermaid
+sequenceDiagram
+    User->>Editor: Hover
+    Editor->>Server: JSON-RPC: textDocument/hover
+    Note right of Server: 1. State Lookup<br/>2. Tree-sitter Query<br/>3. Generate Markdown
+    Server-->>Editor: JSON-RPC Response (Markdown)
+    Editor-->>User: Floating Window
+````
 
 Der Ablauf von Nutzerinteraktion und Anfrage an den Server, bis Serverantwort und Antwortverarbeitung am Beispiel des **Hover-Features** wird im folgenden skizziert:
 
